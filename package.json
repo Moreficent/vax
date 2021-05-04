@@ -1,0 +1,10 @@
+{
+  "name": "vax",
+  "version": "0.0.1",
+  "description": "Notifies on the availability of a vaccine slot",
+  "main": "index.js",
+  "repository": "https://github.com/Moreficent/vax.git",
+  "author": "Harshad Deo",
+  "license": "MIT",
+  "private": false
+}
