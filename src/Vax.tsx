@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {fetch_locations} from './api';
+import TopBar from './TopBar';
 
 const Vax: React.FC<{}> = () => {
   React.useEffect(() => {
@@ -8,7 +9,12 @@ const Vax: React.FC<{}> = () => {
     fetch_locations().then((x) => console.log(x));
   });
 
-  return <h1>Ho gaya</h1>;
+  return (
+    <>
+      <TopBar />
+      <h1>ho gaya</h1>
+    </>
+  );
 };
 
 export default Vax;
