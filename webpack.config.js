@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/index.tsx',
   mode: 'development',
   devtool: 'inline-source-map',
-  target : 'web',
+  target: 'web',
   module: {
     rules: [
       {
@@ -23,23 +23,25 @@ module.exports = {
         use: {
           loader: 'url-loader',
         },
-      }
+      },
     ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  plugins: [new HtmlWebpackPlugin({
-    title: 'Vax || Moreficent',
-    template: 'static/index.tmpl.html',
-    inject: 'body'
-  })],
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Vax || Moreficent',
+      template: 'static/index.tmpl.html',
+      inject: 'body',
+    }),
+  ],
   output: {
     filename: '[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
-    clean: true
+    clean: true,
   },
   devServer: {
-    contentBase: './dist'
-  }
+    contentBase: './dist',
+  },
 };

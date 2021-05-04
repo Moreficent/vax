@@ -1,21 +1,21 @@
 {
   "compilerOptions": {
-      "removeComments": true,
-      "preserveConstEnums": true,
-      "module": "ES2020",
-      "target": "ES2020",
-      "jsx": "react",
-      "sourceMap": true,
-      "esModuleInterop": true,
-      "noImplicitThis": true,
-      "noImplicitAny": true,
-      "lib": ["ES2020", "DOM"],
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitReturns": true,
-      "noUnusedLocals": true,
-      "strictNullChecks": true,
-      "allowSyntheticDefaultImports": true,
-      "moduleResolution": "node",
-      "isolatedModules": true
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "module": "ES2020",
+    "target": "ES2020",
+    "jsx": "react",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "lib": ["ES2020", "DOM"],
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "isolatedModules": true
   }
 }
