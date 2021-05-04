@@ -2,9 +2,20 @@
   "name": "vax",
   "version": "0.0.1",
   "description": "Notifies on the availability of a vaccine slot",
-  "main": "index.js",
   "repository": "https://github.com/Moreficent/vax.git",
   "author": "Harshad Deo",
   "license": "MIT",
-  "private": false
+  "private": true,
+  "devDependencies": {
+    "html-webpack-plugin": "^5.3.1",
+    "ts-loader": "^9.1.1",
+    "typescript": "^4.2.4",
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack serve --open"
+  }
 }
