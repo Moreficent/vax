@@ -1,18 +1,21 @@
 import React from 'react';
 
-import {OrderedMap} from 'immutable';
+import {OrderedMap, OrderedSet} from 'immutable';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
 
-import {StateAndDistrict} from './model';
+import {District, StateAndDistrict} from './model';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -40,6 +43,7 @@ export interface UserInputProps {
 const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
   const styles = useStyles();
   const [selectedState, setSelectedState] = React.useState<number>(-1);
+  const [selectedDistricts, setSelectedDistricts] = React.useState<OrderedSet<District>>(OrderedSet());
 
   const StatesList: React.FC<{}> = () => {
     const items = locs.entrySeq().map(([id, elem]) => {
@@ -72,7 +76,11 @@ const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
     const districts = locs.get(selectedState)?.districts || [];
     const items = districts.map((district) => {
       return (
-        <ListItem button key={district.district_id}>
+        <ListItem
+          button
+          key={district.district_id}
+          onClick={(ev) => setSelectedDistricts(selectedDistricts.add(district))}
+        >
           <ListItemText primary={district.district_name} />
         </ListItem>
       );
@@ -95,6 +103,19 @@ const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
   };
 
   const SelectionList: React.FC<{}> = () => {
+    const items = selectedDistricts.toSeq().map((district) => {
+      return (
+        <ListItem key={district.district_id}>
+          <ListItemText primary={district.district_name} />
+          <ListItemSecondaryAction>
+            <IconButton onClick={(ev) => setSelectedDistricts(selectedDistricts.remove(district))}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+      );
+    });
+
     return (
       <List
         component="nav"
@@ -104,8 +125,10 @@ const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
             <Typography variant="h6">Selected</Typography>
           </ListSubheader>
         }
+        className={styles.list}
       >
         <Divider />
+        {items}
       </List>
     );
   };
