@@ -16,6 +16,8 @@ import moment from 'moment';
 import {fetchSessions} from './api';
 import {District, FlatSession} from './model';
 
+const FETCH_INTERVAL = 15 * 60 * 1000;
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -51,6 +53,7 @@ class State {
 
 const Launched: React.FC<LaunchedProps> = ({districts}: LaunchedProps) => {
   const styles = useStyles();
+  const sendNotification = React.useRef<boolean>(Notification.permission === 'granted');
   const executeFetch = React.useRef<boolean>(true);
   const [checkCounter, setCheckCounter] = React.useState<number>(0);
   const [state, setState] = React.useState<State>(new State([]));
@@ -63,6 +66,16 @@ const Launched: React.FC<LaunchedProps> = ({districts}: LaunchedProps) => {
   };
 
   React.useEffect(() => {
+    try {
+      if (!sendNotification.current && Notification.permission === 'default') {
+        Notification.requestPermission().then((resp) => {
+          sendNotification.current = Notification.permission === 'granted';
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
     if (executeFetch.current) {
       const districtIds = districts.map((district) => district.district_id);
       fetchSessions(districtIds).then((resp) => {
@@ -70,6 +83,15 @@ const Launched: React.FC<LaunchedProps> = ({districts}: LaunchedProps) => {
         setState(new State(resp));
       });
     }
+
+    if (sendNotification.current && state.sessions.length > 0) {
+      new Notification('Vaccination slots are available');
+    }
+
+    const timeoutID = setTimeout(executeCheck, FETCH_INTERVAL);
+    return () => {
+      clearTimeout(timeoutID);
+    };
   });
 
   return (

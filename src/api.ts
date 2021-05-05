@@ -101,8 +101,7 @@ export async function fetchSessions(districtIds: Array<number>): Promise<Array<F
         const res: Array<FlatSession> = [];
         centers.forEach((center) => {
           center.sessions.forEach((session) => {
-            // if (session.available_capacity > 0 && session.min_age_limit === 18) {
-            if (session.available_capacity > 0) {
+            if (session.available_capacity > 0 && session.min_age_limit === 18) {
               res.push(
                 new FlatSession(
                   session.session_id,
@@ -138,8 +137,6 @@ export async function fetchSessions(districtIds: Array<number>): Promise<Array<F
   }
 
   res.sort((a, b) => b.capacity - a.capacity);
-
-  console.log(res);
 
   return res;
 }
