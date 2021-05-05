@@ -7,11 +7,11 @@ const DISTRICTS_BASE_URL = `${BASE_URL}/v2/admin/location/districts`;
 export class FetchLocationsReply {
   readonly success: boolean;
 
-  readonly failureRep: string | undefined;
+  readonly failureRep: string;
 
   readonly locs: Array<StateAndDistrict>;
 
-  private constructor(success: boolean, failureRep: string | undefined, locs: Array<StateAndDistrict>) {
+  private constructor(success: boolean, failureRep: string, locs: Array<StateAndDistrict>) {
     this.success = success;
     this.failureRep = failureRep;
     this.locs = locs;
@@ -22,7 +22,7 @@ export class FetchLocationsReply {
   static DISTRICT_FETCH_FAILURE: FetchLocationsReply = new FetchLocationsReply(false, 'Failed to fetch districts', []);
 
   static success(locs: Array<StateAndDistrict>): FetchLocationsReply {
-    return new FetchLocationsReply(true, undefined, locs);
+    return new FetchLocationsReply(true, '', locs);
   }
 }
 
