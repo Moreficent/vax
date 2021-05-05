@@ -9,7 +9,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
 import {fetch_locations} from './api';
-import {StateAndDistrict} from './model';
+import Launched from './Launched';
+import {StateAndDistrict, District} from './model';
 import TopBar from './TopBar';
 import UserInput from './UserInput';
 
@@ -18,6 +19,7 @@ const INVARIANT_FAILURE_MSG = 'Invariant Failure';
 enum Status {
   FetchingDistricts,
   PendingInput,
+  Launched,
   Failure,
 }
 
@@ -26,22 +28,34 @@ class State {
 
   readonly locs: OrderedMap<number, StateAndDistrict>;
 
+  readonly launchDistricts: Array<District>;
+
   readonly failureMsg: string;
 
-  private constructor(status: Status, locs: OrderedMap<number, StateAndDistrict>, failureMsg: string) {
+  private constructor(
+    status: Status,
+    locs: OrderedMap<number, StateAndDistrict>,
+    launchDistricts: Array<District>,
+    failureMsg: string,
+  ) {
     this.status = status;
     this.locs = locs;
+    this.launchDistricts = launchDistricts;
     this.failureMsg = failureMsg;
   }
 
-  static FETCHING_DISTRICTS: State = new State(Status.FetchingDistricts, OrderedMap(), '');
+  static FETCHING_DISTRICTS: State = new State(Status.FetchingDistricts, OrderedMap(), [], '');
 
   static pendingInputs(locs: OrderedMap<number, StateAndDistrict>): State {
-    return new State(Status.PendingInput, locs, '');
+    return new State(Status.PendingInput, locs, [], '');
+  }
+
+  static launched(launchDistricts: Array<District>): State {
+    return new State(Status.Launched, OrderedMap(), launchDistricts, '');
   }
 
   static failure(failureMsg: string): State {
-    return new State(Status.Failure, OrderedMap(), failureMsg);
+    return new State(Status.Failure, OrderedMap(), [], failureMsg);
   }
 }
 
@@ -113,7 +127,16 @@ const Vax: React.FC<{}> = () => {
     return (
       <>
         <TopBar />
-        <UserInput locs={state.locs} />
+        <UserInput locs={state.locs} launchCB={(districts) => setState(State.launched(districts))} />
+      </>
+    );
+  }
+
+  if (state.status === Status.Launched) {
+    return (
+      <>
+        <TopBar />
+        <Launched districts={state.launchDistricts} />
       </>
     );
   }

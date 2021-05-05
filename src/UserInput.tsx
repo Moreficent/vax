@@ -43,9 +43,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface UserInputProps {
   locs: OrderedMap<number, StateAndDistrict>;
+  launchCB: (districts: Array<District>) => void;
 }
 
-const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
+const UserInput: React.FC<UserInputProps> = ({locs, launchCB}: UserInputProps) => {
   const styles = useStyles();
   const [selectedState, setSelectedState] = React.useState<number>(-1);
   const [selectedDistricts, setSelectedDistricts] = React.useState<OrderedSet<District>>(OrderedSet());
@@ -148,6 +149,7 @@ const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
             color="secondary"
             disabled={selectedDistricts.isEmpty()}
             className={styles.launchButton}
+            onClick={(ev) => launchCB(selectedDistricts.toArray())}
           >
             Launch
           </Button>
