@@ -2,6 +2,7 @@ import React from 'react';
 
 import {OrderedMap, OrderedSet} from 'immutable';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -21,6 +22,10 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       marginTop: '3em',
+    },
+    launchButton: {
+      margin: theme.spacing(2),
+      width: '100%',
     },
     paper: {
       padding: theme.spacing(1),
@@ -136,6 +141,18 @@ const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
   return (
     <Container maxWidth="lg" className={styles.root}>
       <Grid container spacing={2}>
+        <Grid item xs={2} />
+        <Grid item xs={8}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            disabled={selectedDistricts.isEmpty()}
+            className={styles.launchButton}
+          >
+            Launch
+          </Button>
+        </Grid>
+        <Grid item xs={2} />
         <Grid item xs={4}>
           <Paper className={styles.paper}>
             <StatesList />
