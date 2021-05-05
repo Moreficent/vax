@@ -1,3 +1,5 @@
+import {OrderedMap} from 'immutable';
+
 import {State, StateAndDistrict} from './model';
 
 const BASE_URL = 'https://cdn-api.co-vin.in/api';
@@ -9,19 +11,27 @@ export class FetchLocationsReply {
 
   readonly failureRep: string;
 
-  readonly locs: Array<StateAndDistrict>;
+  readonly locs: OrderedMap<number, StateAndDistrict>;
 
-  private constructor(success: boolean, failureRep: string, locs: Array<StateAndDistrict>) {
+  private constructor(success: boolean, failureRep: string, locs: OrderedMap<number, StateAndDistrict>) {
     this.success = success;
     this.failureRep = failureRep;
     this.locs = locs;
   }
 
-  static STATES_FETCH_FAILURE: FetchLocationsReply = new FetchLocationsReply(false, 'Failed to fetch states', []);
+  static STATES_FETCH_FAILURE: FetchLocationsReply = new FetchLocationsReply(
+    false,
+    'Failed to fetch states',
+    OrderedMap(),
+  );
 
-  static DISTRICT_FETCH_FAILURE: FetchLocationsReply = new FetchLocationsReply(false, 'Failed to fetch districts', []);
+  static DISTRICT_FETCH_FAILURE: FetchLocationsReply = new FetchLocationsReply(
+    false,
+    'Failed to fetch districts',
+    OrderedMap(),
+  );
 
-  static success(locs: Array<StateAndDistrict>): FetchLocationsReply {
+  static success(locs: OrderedMap<number, StateAndDistrict>): FetchLocationsReply {
     return new FetchLocationsReply(true, '', locs);
   }
 }
@@ -50,20 +60,23 @@ export async function fetch_locations(): Promise<FetchLocationsReply> {
       .then((response) => {
         const {districts} = response;
         if (districts) {
-          return new StateAndDistrict(state.state_id, state.state_name, districts);
+          const res: [number, StateAndDistrict] = [state.state_id, new StateAndDistrict(state.state_name, districts)];
+          return res;
         }
         return Promise.reject('districts field is not present in reply');
       }),
   );
 
-  let locs: Array<StateAndDistrict>;
+  let locsArray: Array<[number, StateAndDistrict]>;
 
   try {
-    locs = await Promise.all(stateDistrictPromise);
+    locsArray = await Promise.all(stateDistrictPromise);
   } catch (err) {
     console.error(err);
     return FetchLocationsReply.DISTRICT_FETCH_FAILURE;
   }
+
+  const locs: OrderedMap<number, StateAndDistrict> = OrderedMap(locsArray);
 
   return FetchLocationsReply.success(locs);
 }

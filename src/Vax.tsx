@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {OrderedMap} from 'immutable';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
@@ -10,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import {fetch_locations} from './api';
 import {StateAndDistrict} from './model';
 import TopBar from './TopBar';
+import UserInput from './UserInput';
 
 const INVARIANT_FAILURE_MSG = 'Invariant Failure';
 
@@ -22,31 +24,31 @@ enum Status {
 class State {
   readonly status: Status;
 
-  readonly locs: Array<StateAndDistrict>;
+  readonly locs: OrderedMap<number, StateAndDistrict>;
 
   readonly failureMsg: string;
 
-  private constructor(status: Status, locs: Array<StateAndDistrict>, failureMsg: string) {
+  private constructor(status: Status, locs: OrderedMap<number, StateAndDistrict>, failureMsg: string) {
     this.status = status;
     this.locs = locs;
     this.failureMsg = failureMsg;
   }
 
-  static FETCHING_DISTRICTS: State = new State(Status.FetchingDistricts, [], '');
+  static FETCHING_DISTRICTS: State = new State(Status.FetchingDistricts, OrderedMap(), '');
 
-  static pendingInputs(locs: Array<StateAndDistrict>): State {
+  static pendingInputs(locs: OrderedMap<number, StateAndDistrict>): State {
     return new State(Status.PendingInput, locs, '');
   }
 
   static failure(failureMsg: string): State {
-    return new State(Status.Failure, [], failureMsg);
+    return new State(Status.Failure, OrderedMap(), failureMsg);
   }
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
-      marginTop: '5em',
+      marginTop: '3em',
       minWidth: 275,
       textAlign: 'center',
     },
@@ -111,11 +113,7 @@ const Vax: React.FC<{}> = () => {
     return (
       <>
         <TopBar />
-        <Container maxWidth="md">
-          <Card className={styles.card}>
-            <CardContent className={styles.cardContent}>pending input</CardContent>
-          </Card>
-        </Container>
+        <UserInput locs={state.locs} />
       </>
     );
   }

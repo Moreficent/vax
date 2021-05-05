@@ -1,0 +1,136 @@
+import React from 'react';
+
+import {OrderedMap} from 'immutable';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+
+import {StateAndDistrict} from './model';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      marginTop: '3em',
+    },
+    paper: {
+      padding: theme.spacing(1),
+    },
+    listHeader: {
+      textAlign: 'center',
+      background: theme.palette.background.paper,
+    },
+    list: {
+      maxHeight: '45em',
+      overflow: 'auto',
+    },
+  }),
+);
+
+export interface UserInputProps {
+  locs: OrderedMap<number, StateAndDistrict>;
+}
+
+const UserInput: React.FC<UserInputProps> = ({locs}: UserInputProps) => {
+  const styles = useStyles();
+  const [selectedState, setSelectedState] = React.useState<number>(-1);
+
+  const StatesList: React.FC<{}> = () => {
+    const items = locs.entrySeq().map(([id, elem]) => {
+      const selected = selectedState === id;
+      return (
+        <ListItem button key={id} selected={selected} autoFocus={selected} onClick={(ev) => setSelectedState(id)}>
+          <ListItemText primary={elem.name} />
+        </ListItem>
+      );
+    });
+
+    return (
+      <List
+        component="nav"
+        aria-labelledby="states-list-subheader"
+        subheader={
+          <ListSubheader component="div" id="states-list-subheader" className={styles.listHeader}>
+            <Typography variant="h6">State</Typography>
+          </ListSubheader>
+        }
+        className={styles.list}
+      >
+        <Divider />
+        {items}
+      </List>
+    );
+  };
+
+  const DistrictList: React.FC<{}> = () => {
+    const districts = locs.get(selectedState)?.districts || [];
+    const items = districts.map((district) => {
+      return (
+        <ListItem button key={district.district_id}>
+          <ListItemText primary={district.district_name} />
+        </ListItem>
+      );
+    });
+    return (
+      <List
+        component="nav"
+        aria-labelledby="districts-list-subheader"
+        subheader={
+          <ListSubheader component="div" id="districts-list-subheader" className={styles.listHeader}>
+            <Typography variant="h6">District</Typography>
+          </ListSubheader>
+        }
+        className={styles.list}
+      >
+        <Divider />
+        {items}
+      </List>
+    );
+  };
+
+  const SelectionList: React.FC<{}> = () => {
+    return (
+      <List
+        component="nav"
+        aria-labelledby="states-list-subheader"
+        subheader={
+          <ListSubheader component="div" id="states-list-subheader" className={styles.listHeader}>
+            <Typography variant="h6">Selected</Typography>
+          </ListSubheader>
+        }
+      >
+        <Divider />
+      </List>
+    );
+  };
+
+  return (
+    <Container maxWidth="lg" className={styles.root}>
+      <Grid container spacing={2}>
+        <Grid item xs={4}>
+          <Paper className={styles.paper}>
+            <StatesList />
+          </Paper>
+        </Grid>
+        <Grid item xs={4}>
+          <Paper className={styles.paper}>
+            <DistrictList />
+          </Paper>
+        </Grid>
+        <Grid item xs={4}>
+          <Paper className={styles.paper}>
+            <SelectionList />
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
+  );
+};
+
+export default UserInput;

@@ -9,12 +9,10 @@ export interface District {
 }
 
 export class StateAndDistrict {
-  readonly id: number;
   readonly name: string;
   readonly districts: Array<District>;
 
-  constructor(id: number, name: string, districts: Array<District>) {
-    this.id = id;
+  constructor(name: string, districts: Array<District>) {
     this.name = name;
     this.districts = districts;
   }
