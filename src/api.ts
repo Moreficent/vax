@@ -1,10 +1,12 @@
 import {OrderedMap} from 'immutable';
+import moment from 'moment';
 
-import {State, StateAndDistrict} from './model';
+import {State, StateAndDistrict, Center, FlatSession} from './model';
 
 const BASE_URL = 'https://cdn-api.co-vin.in/api';
 const STATES_URL = `${BASE_URL}/v2/admin/location/states`;
 const DISTRICTS_BASE_URL = `${BASE_URL}/v2/admin/location/districts`;
+const SLOTS_BASE_URL = `${BASE_URL}/v2/appointment/sessions/public/calendarByDistrict`;
 
 export class FetchLocationsReply {
   readonly success: boolean;
@@ -81,8 +83,63 @@ export async function fetch_locations(): Promise<FetchLocationsReply> {
   return FetchLocationsReply.success(locs);
 }
 
-async function fetch_slots() {
-  console.log('ho gaya');
-}
+export async function fetchSessions(districtIds: Array<number>): Promise<Array<FlatSession>> {
+  const dateRep = moment().format('DD-MM-YYYY');
+  const promises = districtIds.map((id) => {
+    const queryURL = `${SLOTS_BASE_URL}?district_id=${id}&date=${dateRep}`;
 
-export default fetch_slots;
+    return fetch(queryURL)
+      .then((resp) => resp.json())
+      .then((resp) => {
+        const {centers} = resp;
+        if (centers) {
+          return centers as Array<Center>;
+        }
+        return Promise.reject('centers field not present in reply');
+      })
+      .then((centers) => {
+        const res: Array<FlatSession> = [];
+        centers.forEach((center) => {
+          center.sessions.forEach((session) => {
+            // if (session.available_capacity > 0 && session.min_age_limit === 18) {
+            if (session.available_capacity > 0) {
+              res.push(
+                new FlatSession(
+                  session.session_id,
+                  session.date,
+                  session.available_capacity,
+                  center.name,
+                  center.address,
+                  center.state_name,
+                  center.district_name,
+                ),
+              );
+            }
+          });
+        });
+        return res;
+      });
+  });
+
+  let res: Array<FlatSession> = [];
+
+  try {
+    const responses = await Promise.allSettled(promises);
+    responses.forEach((response) => {
+      if (response.status === 'rejected') {
+        console.error(response.reason);
+      } else {
+        const {value} = response;
+        res = res.concat(value);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+
+  res.sort((a, b) => b.capacity - a.capacity);
+
+  console.log(res);
+
+  return res;
+}
