@@ -38,7 +38,7 @@ export class FetchLocationsReply {
   }
 }
 
-export async function fetch_locations(): Promise<FetchLocationsReply> {
+export async function fetchLocations(): Promise<FetchLocationsReply> {
   let statesArray: Array<State>;
 
   try {

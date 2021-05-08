@@ -8,7 +8,7 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
-import {fetch_locations} from './api';
+import {fetchLocations} from './api';
 import Launched from './Launched';
 import {StateAndDistrict, District} from './model';
 import TopBar from './TopBar';
@@ -93,7 +93,7 @@ const Vax: React.FC<{}> = () => {
 
   React.useEffect(() => {
     if (state.status === Status.FetchingDistricts) {
-      fetch_locations()
+      fetchLocations()
         .then((resp) => {
           if (resp.success) {
             setState(State.pendingInputs(resp.locs));
