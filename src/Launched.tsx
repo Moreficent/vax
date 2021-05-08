@@ -83,7 +83,8 @@ const Launched: React.FC<LaunchedProps> = ({districts}: LaunchedProps) => {
         setState(new State(resp));
       });
     } else if (sendNotification.current && state.sessions.length > 0) {
-      new Notification('Vaccination slots are available');
+      const notification = new Notification('Vaccination slots are available');
+      notification.onclick = () => window.focus()
     }
 
     const timeoutID = setTimeout(executeCheck, FETCH_INTERVAL);
