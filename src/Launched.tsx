@@ -82,9 +82,7 @@ const Launched: React.FC<LaunchedProps> = ({districts}: LaunchedProps) => {
         executeFetch.current = false;
         setState(new State(resp));
       });
-    }
-
-    if (sendNotification.current && state.sessions.length > 0) {
+    } else if (sendNotification.current && state.sessions.length > 0) {
       new Notification('Vaccination slots are available');
     }
 
@@ -111,7 +109,9 @@ const Launched: React.FC<LaunchedProps> = ({districts}: LaunchedProps) => {
           Last Check
         </Typography>
         <Typography variant="body1">{state.timestamp}</Typography>
-        <Typography variant="body2">The districts will be periodically checked, and you will be notified if any slots become available</Typography>
+        <Typography variant="body2">
+          The districts will be periodically checked, and you will be notified if any slots become available
+        </Typography>
         <Button variant="outlined" color="secondary" onClick={executeCheck} className={styles.checkButton}>
           Check Now
         </Button>
